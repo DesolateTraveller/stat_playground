@@ -12,6 +12,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 #----------------------------------------
+from io import BytesIO, StringIO
 from PIL import Image
 import plotly.express as px
 import plotly.figure_factory as ff
@@ -107,6 +108,18 @@ def load_file(file):
         df = pd.DataFrame()
     return df
 
+@st.cache_data(ttl="2h")
+def get_plotly_download(fig, file_format="png", scale=3):
+    if file_format == "png":
+        buffer = BytesIO()
+        fig.write_image(buffer, format="png", scale=scale)
+        buffer.seek(0)
+    elif file_format == "html":
+        html_str = StringIO()
+        fig.write_html(html_str)
+        buffer = BytesIO(html_str.getvalue().encode("utf-8"))
+        buffer.seek(0)
+    return buffer
 #---------------------------------------------------------------------------------------------------------------------------------
 ### Main app
 #---------------------------------------------------------------------------------------------------------------------------------
@@ -208,11 +221,11 @@ if page == "analysis":
                                 single_val = st.number_input(f"Value", key=f"value_{col}", value=float(selected_df[col].median()) if not pd.isna(selected_df[col].median()) else 0.0)
 
                             if operator == "<":
-                                selected_data = selected_data[selected_data[col] < single_val]
+                                selected_df = selected_df[selected_df[col] < single_val]
                         elif operator == ">":
-                            selected_data = selected_data[selected_data[col] > single_val]
+                            selected_df = selected_df[selected_df[col] > single_val]
                         elif operator == "=":
-                            selected_data = selected_data[selected_data[col] == single_val]
+                            selected_df = selected_df[selected_df[col] == single_val]
 
                     elif pd.api.types.is_object_dtype(selected_df[col]) or pd.api.types.is_categorical_dtype(selected_df[col]):
                     
@@ -336,8 +349,7 @@ if page == "analysis":
                         sns.heatmap(selected_df_num.corr(), ax=ax, annot=True, linewidths=0.05, fmt='.2f', cmap="magma")
                         st.pyplot(fig)
                     else:
-                        st.warning("No numerical columns found in the dataset.")
-                        
+                        st.warning("No numerical columns found in the dataset.")      
         #-----------------------------------------------------------------------------------------------------------------------------------------------    
         st.markdown(
             """
@@ -484,8 +496,8 @@ if page == "analysis":
                                 unique_groups = selected_df[categorical_var_mw].dropna().unique()
                                 
                                 if len(unique_groups) == 2:
-                                    group1 = selected_data[selected_data[categorical_var_mw] == unique_groups[0]][numeric_var_mw]
-                                    group2 = selected_data[selected_data[categorical_var_mw] == unique_groups[1]][numeric_var_mw]
+                                    group1 = selected_df[selected_df[categorical_var_mw] == unique_groups[0]][numeric_var_mw]
+                                    group2 = selected_df[selected_df[categorical_var_mw] == unique_groups[1]][numeric_var_mw]
 
                                     u_statistic, p_value = stats.mannwhitneyu(group1, group2, alternative='two-sided')
                                     st.write("### Mann-Whitney U Test Results")
@@ -514,7 +526,7 @@ if page == "analysis":
                         with st.container(border=True):
                             
                             if numeric_var != "None" and categorical_var != "None":
-                                groups = [group[numeric_var].dropna() for name, group in selected_data.groupby(categorical_var)]
+                                groups = [group[numeric_var].dropna() for name, group in selected_df.groupby(categorical_var)]
             
                                 if len(groups) >= 3:
                                     h_statistic, p_value = stats.kruskal(*groups)
@@ -528,3 +540,105 @@ if page == "analysis":
                                         st.write(f"**Interpretation**: No significant difference in `{numeric_var}` distribution across groups in `{categorical_var}`.")
                             else:
                                 st.warning("Please select a categorical variable with three or more unique groups.")
+        #-----------------------------------------------------------------------------------------------------------------------------------------------    
+        st.markdown(
+            """
+            <style>
+                .centered-info {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-weight: bold;
+                font-size: 15px;
+                color: #007BFF; 
+                padding: 5px;
+                background-color: #E8F4FF; 
+                border-radius: 5px;
+                border: 1px solid #007BFF;
+                margin-top: 5px;
+                }
+            </style>
+            """,unsafe_allow_html=True,)
+        st.markdown('<div class="centered-info"><span style="margin-left: 10px;">Visualization</span></div>',unsafe_allow_html=True,)
+        #--------------------------------------------------------------- 
+        num_plots = st.selectbox("Select the number of plots to generate", [1, 2, 3, 4], index=0)
+
+        for i in range(num_plots):
+            st.write(f"#### Plot {i + 1}")
+            left_col, right_col = st.columns((0.2,0.8))
+
+            with left_col:
+                with st.container(border=True):
+                
+                    selected_var = st.selectbox(f"Select Y variable for Plot {i + 1}", selected_df.columns, key=f"y_{i}")
+                    secondary_var = st.selectbox(f"Select X variable for Plot {i + 1} (optional)", ["None"] + list(selected_df.columns), key=f"x_{i}")
+                    group_by_var = st.selectbox(f"Select a grouping variable for Plot {i + 1} (optional)", ["None"] + list(selected_df.columns), key=f"group_{i}")
+
+                    if secondary_var == "None":
+                        plot_options = ["Histogram Plot", "Bar Plot", "Box Plot"]  
+                    else:
+                        plot_options = ["Histogram Plot", "Scatter Plot", "Line Plot", "Regression Plot", "Bar Plot", "Box Plot"]
+
+                    plot_type = st.radio(f"Select Plot Type for Plot {i + 1}", plot_options, index=0, key=f"type_{i}")
+                    if plot_type in ["Scatter Plot", "Line Plot", "Regression Plot"] and secondary_var == "None":
+                        st.warning(f"{plot_type} requires both a Y and an X variable. Please select a secondary variable (X) for this plot type.")
+    
+                    use_aggregation = st.checkbox(f"Apply Aggregation Function to Plot", key=f"agg_{i}")
+                    if use_aggregation:
+                        aggregation_function = st.selectbox(f"Select aggregation function for Plot", ["sum", "avg", "count", "min", "max"], key=f"agg_func_{i}")
+
+                    default_title = f"{plot_type} of {selected_var}" + (f" vs {secondary_var}" if secondary_var != "None" else "") + (f" grouped by {group_by_var}" if group_by_var != "None" else "")
+                    plot_title = st.text_input(f"Set title for Plot {i + 1}", value=default_title, key=f"title_{i}")
+                    plot_theme = st.selectbox(f"Select Plot Theme for Plot {i + 1}", ["ggplot2", "seaborn", "simple_theme", "none"], key=f"theme_{i}")
+                    theme = {"ggplot2": "ggplot2", "seaborn": "plotly_white", "simple_theme": "simple_white", "none": None}.get(plot_theme)
+
+                    grouping_vars = [var for var in [secondary_var, group_by_var] if var != "None"]
+                    aggregated_data = selected_df  # Default to non-aggregated data
+                    if use_aggregation:
+                        if grouping_vars:
+
+                            if aggregation_function == "sum":
+                                aggregated_data = selected_df.groupby(grouping_vars)[selected_var].sum().reset_index()
+                            elif aggregation_function == "avg":
+                                aggregated_data = selected_df.groupby(grouping_vars)[selected_var].mean().reset_index()
+                            elif aggregation_function == "count":
+                                aggregated_data = selected_df.groupby(grouping_vars)[selected_var].count().reset_index()
+                            elif aggregation_function == "min":
+                                aggregated_data = selected_df.groupby(grouping_vars)[selected_var].min().reset_index()
+                            elif aggregation_function == "max":
+                                aggregated_data = selected_df.groupby(grouping_vars)[selected_var].max().reset_index()
+                        else:
+                            st.warning("To use an aggregation function, please select a secondary variable (X) or a grouping variable.")
+                    else:
+                        aggregated_data = selected_df
+
+            with right_col:
+                
+                    
+                    if plot_type == "Histogram Plot":
+                        fig = px.histogram(aggregated_data, x=selected_var, color=group_by_var if group_by_var != "None" else None, nbins=30, template=theme,
+                                   title=plot_title)
+                    elif plot_type == "Scatter Plot" and secondary_var != "None":
+                        fig = px.scatter(aggregated_data, x=secondary_var, y=selected_var, color=group_by_var if group_by_var != "None" else None, template=theme,
+                                 title=plot_title)
+                    elif plot_type == "Line Plot" and secondary_var != "None":
+                        fig = px.line(aggregated_data, x=secondary_var, y=selected_var, color=group_by_var if group_by_var != "None" else None, template=theme,
+                              title=plot_title)
+                    elif plot_type == "Regression Plot" and secondary_var != "None":
+                        fig = px.scatter(aggregated_data, x=secondary_var, y=selected_var, color=group_by_var if group_by_var != "None" else None, trendline="ols", template=theme,
+                                 title=plot_title)
+                    elif plot_type == "Bar Plot":
+                        fig = px.bar(aggregated_data, y=selected_var, x=secondary_var if secondary_var != "None" else None, color=group_by_var if group_by_var != "None" else None,
+                             template=theme, title=plot_title)
+                        fig.update_layout(barmode='group' if group_by_var != "None" else 'relative')
+                    elif plot_type == "Box Plot":
+                        fig = px.box(aggregated_data, y=selected_var, x=secondary_var if secondary_var != "None" else None, color=group_by_var if group_by_var != "None" else None,
+                             template=theme, title=plot_title)
+
+                    st.plotly_chart(fig, use_container_width=True, key=f"plot_{i}")
+            
+                    #png_buffer = get_plotly_download(fig, file_format="png", scale=3)
+                    #html_buffer = get_plotly_download(fig, file_format="html")
+
+                    #st.download_button(label="Download as PNG (High Quality)",data=png_buffer,file_name=f"plot_{i + 1}.png",mime="image/png")
+                    #st.download_button(label="Download as HTML (Interactive)",data=html_buffer,file_name=f"plot_{i + 1}.html",mime="text/html")
