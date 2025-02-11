@@ -359,7 +359,7 @@ if page == "analysis":
             """,unsafe_allow_html=True,)
         st.markdown('<div class="centered-info"><span style="margin-left: 10px;">Hypothesis Testing</span></div>',unsafe_allow_html=True,)
         #--------------------------------------------------------------- 
-        tab1, tab2, tab3, tab4, tab5 = st.tabs(["**T-Test**","**Chi-Square Test**","**Anova (F Statistics)**","**Mann-Whitney U Test**","**Kruskal-Wallis Test**"])   
+        tab1, tab2, tab3, tab4, tab5 = st.tabs(["**T-Test**","**Chi-Square Test**","**Anova (F Statistics)**","**Mann-Whitney Test (U Statistics)**","**Kruskal-Wallis Test (h Statistics)**"])   
         #---------------------------------------------------------------         
         with tab1:
             
@@ -498,3 +498,33 @@ if page == "analysis":
                                         st.write(f"**Interpretation**: No significant difference in `{numeric_var}` distribution between the groups in `{categorical_var_mw}`.")
                             else:
                                 st.warning("Please select a categorical variable with exactly two unique groups.")
+                                
+        #---------------------------------------------------------------         
+        with tab5:
+            
+            st.info("Select a numeric variable and a categorical variable with three or more groups.")
+            col1, col2= st.columns((0.2,0.8))
+            with col1:
+                with st.container(border=True):
+                    
+                    numeric_var= st.selectbox("Select numeric variable for Mann-Whitney", ["None"] + list(selected_df.select_dtypes(include=['int64', 'float64']).columns),key="numeric_var_kw")
+                    categorical_var = st.selectbox("Select categorical variable for Mann-Whitney", ["None"] + list(selected_df.select_dtypes(include=['object', 'category']).columns),key="categorical_var_kw")
+
+                    with col2:
+                        with st.container(border=True):
+                            
+                            if numeric_var != "None" and categorical_var != "None":
+                                groups = [group[numeric_var].dropna() for name, group in selected_data.groupby(categorical_var)]
+            
+                                if len(groups) >= 3:
+                                    h_statistic, p_value = stats.kruskal(*groups)
+                                    st.write("#### Kruskal-Wallis Test Results")
+                                    st.write(f"H-Statistic: {h_statistic}")
+                                    st.write(f"P-Value: {p_value}")
+
+                                    if p_value < 0.05:
+                                        st.write(f"**Interpretation**: The distribution of `{numeric_var}` differs significantly across groups in `{categorical_var}`.")
+                                    else:
+                                        st.write(f"**Interpretation**: No significant difference in `{numeric_var}` distribution across groups in `{categorical_var}`.")
+                            else:
+                                st.warning("Please select a categorical variable with three or more unique groups.")
