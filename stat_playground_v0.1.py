@@ -131,6 +131,7 @@ col1, col2 = st.columns(2)
 with col1:
     if st.button("🏠 **Home**",use_container_width=True):
         st.session_state.current_page = "home"
+        
 with col2:
     if st.button("📈 **Analysis**",use_container_width=True):
         st.session_state.current_page = "analysis" 
@@ -139,9 +140,44 @@ page = st.session_state.current_page
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
+if page == "home":
+    
+    with st.container(border=True):
+
+        st.info(
+            """
+            Statistics Playground provides an intuitive, user-friendly interface for comprehensive statistical analysis and visualization. /n
+            Designed to simplify complex data analysis tasks, Statistics Playground empowers researchers and social scientists to explore, visualize, and interpret their data without needing programming skills. 
+            By supporting diverse statistical tests, including T-tests, Chi-Square, ANOVA, and correlation analysis, Statistics Playground offers the tools to investigate relationships within data. 
+            Its customizable visualizations, proportion tables, and weighted calculations make it ideal for in-depth examination of survey responses, demographic distributions, and experimental results. 
+            Statistics Playground’s flexibility, combined with easy data uploads and export options, ensures a seamless analytical experience tailored for effective, data-driven insights.
+        """)
+
+    stats_expander = st.expander("**:red[Key Features]**", expanded=True)
+    with stats_expander:       
+            st.info('''
+                       
+            - Data Subsetting & Filtering: Easily refine your dataset by selecting specific rows and columns for analysis.
+            - Proportion Tables & Weighted Analysis: Generate proportion tables with optional weighted calculations for accurate survey data interpretation.
+            - Comprehensive Statistical Tests: Perform T-tests, Chi-Square, ANOVA, and more to analyze relationships within your data.
+            - Descriptive Statistics & Correlation Analysis: Gain detailed insight into your dataset through summary statistics and correlation matrices.
+            - Versatile Visualization Tools: Create histograms, scatter plots, line plots, regression plots, and box plots with options for customization.
+            - Aggregation Functions: Apply sum, mean, count, and other aggregation functions to streamline data summaries.
+            - High-Quality Export Options: Download visualizations in high-resolution PNG or interactive HTML formats for reporting and sharing.
+            
+            ''')
+#---------------------------------------------------------------------------------------------------------------------------------
+
 if page == "analysis":
     
-    st.markdown(
+    st.sidebar.subheader("**:blue[Contents]**",divider='blue')
+    file = st.sidebar.file_uploader("**:blue[Choose a file]**",type=["csv", "xls", "xlsx"], accept_multiple_files=False, key="file_upload")
+    st.sidebar.divider()
+    if file is not None:
+        df = load_file(file)        #for filter
+        df1 = df.copy()             #for analysis
+        #---------------------------------------------------------------        
+        st.sidebar.markdown(
             """
             <style>
                 .centered-info {
@@ -159,14 +195,8 @@ if page == "analysis":
                 }
             </style>
             """,unsafe_allow_html=True,)
-    st.markdown('<div class="centered-info"><span style="margin-left: 10px;">Filters</span></div>',unsafe_allow_html=True,)
-    #---------------------------------------------------------------
-    file = st.sidebar.file_uploader("**:blue[Choose a file]**",type=["csv", "xls", "xlsx"], accept_multiple_files=False, key="file_upload")
-    st.sidebar.divider()
-    if file is not None:
-        df = load_file(file)        #for filter
-        df1 = df.copy()             #for analysis
-        
+        st.sidebar.markdown('<div class="centered-info"><span style="margin-left: 10px;">Filters</span></div>',unsafe_allow_html=True,)
+        #---------------------------------------------------------------
         def initialize_session_state():
             if 'selected_columns' not in st.session_state:
                 st.session_state.selected_columns = df.columns.tolist()
@@ -186,10 +216,10 @@ if page == "analysis":
         col1, col2 = st.columns((0.8,0.2))
         with col1:
             with st.container(border=True):
-                selected_columns = st.multiselect("**:blue[Columns to display]**", options=df.columns, default=st.session_state.selected_columns, key="selected_columns") 
+                selected_columns = st.sidebar.multiselect("**:blue[Columns to display]**", options=df.columns, default=st.session_state.selected_columns, key="selected_columns") 
         with col2:   
             with st.container(border=True):
-                subset_option = st.selectbox("**:blue[Subset Data Options]**", ["No Subset", "Enable Subset"])
+                subset_option = st.sidebar.selectbox("**:blue[Subset Data Options]**", ["No Subset", "Enable Subset"])
         #---------------------------------------------------------------
         selected_df = df[selected_columns].copy()
         #---------------------------------------------------------------
@@ -234,32 +264,29 @@ if page == "analysis":
                         selected_vals = st.multiselect(f"Select values for {col}:", options=unique_vals, default=unique_vals, key=f"filter_{col}")
                         st.session_state.categorical_filters[col] = selected_vals
                         selected_df = selected_df[selected_df[col].isin(selected_vals)]
-        #---------------------------------------------------------------                
-        stats_expander = st.expander("**:blue[Preview]**", expanded=True)
-        with stats_expander: 
-            st.dataframe(selected_df.head(2),use_container_width=True)
+        #---------------------------------------------------------------  
+        st.markdown('<div class="centered-info"><span style="margin-left: 10px;">Preview</span></div>',unsafe_allow_html=True,)  
+        #st.markdown("")
+        #---------------------------------------------------------------             
+        #stats_expander = st.expander("", expanded=True)
+        #with stats_expander: 
+        with st.container(border=True):
+            
+            st.dataframe(selected_df.head(3),use_container_width=True)
         #-----------------------------------------------------------------------------------------------------------------------------------------------    
-        st.markdown(
-            """
-            <style>
-                .centered-info {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-weight: bold;
-                font-size: 15px;
-                color: #007BFF; 
-                padding: 5px;
-                background-color: #E8F4FF; 
-                border-radius: 5px;
-                border: 1px solid #007BFF;
-                margin-top: 5px;
-                }
-            </style>
-            """,unsafe_allow_html=True,)
         st.markdown('<div class="centered-info"><span style="margin-left: 10px;">Summary Statistics</span></div>',unsafe_allow_html=True,)
-        #--------------------------------------------------------------- 
-        colSUM, colType = st.columns(2)
+        #---------------------------------------------------------------
+        with st.container(border=True):   
+            
+            col1, col2, col3, col4, col5, col6, col7, col8, col9 = st.columns(9)
+            col1.metric('**input values (rows)**', selected_df.shape[0], help='number of rows')
+            col2.metric('**variables (columns)**', selected_df.shape[1], help='number of columns')     
+            col3.metric('**numerical variables**', len(selected_df.select_dtypes(include=['float64', 'int64']).columns), help='number of numerical variables')
+            col4.metric('**categorical variables**', len(selected_df.select_dtypes(include=['object']).columns), help='number of categorical variables')
+            col5.metric('**Missing values**', selected_df.isnull().sum().sum(), help='Total missing values in the dataset')
+            #col6.metric('**Unique categorical values**', sum(df.select_dtypes(include=['object']).nunique()), help='Sum of unique values in categorical variables')
+         
+        colSUM, colType, col3 = st.columns((0.4,0.2,0.4))
         with colSUM:
             
             described_df = selected_df.describe().T
@@ -336,6 +363,7 @@ if page == "analysis":
                 with st.container(border=True):   
                     
                     if proportion_table is not None:
+                        st.markdown("**Categorical Correlations**")
                         st.dataframe(proportion_table)
                     else:
                         st.warning("Please select at least one categorical variable to generate the proportion table.")
@@ -344,6 +372,7 @@ if page == "analysis":
                 with st.container(border=True):   
                     
                     selected_df_num = selected_df.select_dtypes(include=['int64', 'float64'])
+                    st.markdown("**Numerical Correlations**")
                     if not selected_df_num.empty:
                         fig, ax = plt.subplots(figsize=(14,2.5))
                         sns.heatmap(selected_df_num.corr(), ax=ax, annot=True, linewidths=0.05, fmt='.2f', cmap="magma")
@@ -351,24 +380,6 @@ if page == "analysis":
                     else:
                         st.warning("No numerical columns found in the dataset.")      
         #-----------------------------------------------------------------------------------------------------------------------------------------------    
-        st.markdown(
-            """
-            <style>
-                .centered-info {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-weight: bold;
-                font-size: 15px;
-                color: #007BFF; 
-                padding: 5px;
-                background-color: #E8F4FF; 
-                border-radius: 5px;
-                border: 1px solid #007BFF;
-                margin-top: 5px;
-                }
-            </style>
-            """,unsafe_allow_html=True,)
         st.markdown('<div class="centered-info"><span style="margin-left: 10px;">Hypothesis Testing</span></div>',unsafe_allow_html=True,)
         #--------------------------------------------------------------- 
         tab1, tab2, tab3, tab4, tab5 = st.tabs(["**T-Test**","**Chi-Square Test**","**Anova (F Statistics)**","**Mann-Whitney Test (U Statistics)**","**Kruskal-Wallis Test (h Statistics)**"])   
@@ -380,9 +391,9 @@ if page == "analysis":
             with col1:
                 with st.container(border=True):
                         
-                    numeric_var = st.selectbox("Select numeric variable", ["None"] + list(selected_df.select_dtypes(include=['int64', 'float64']).columns))
-                    categorical_var = st.selectbox("Select categorical variable", ["None"] + list(selected_df.select_dtypes(include=['object', 'category']).columns))
-                    tail_option = st.selectbox("Select test type", ["Two-Tailed", "One-Tailed"])
+                    numeric_var = st.selectbox("**:blue[Select numeric variable]**", ["None"] + list(selected_df.select_dtypes(include=['int64', 'float64']).columns))
+                    categorical_var = st.selectbox("**:blue[Select categorical variable]**", ["None"] + list(selected_df.select_dtypes(include=['object', 'category']).columns))
+                    tail_option = st.selectbox("**:blue[Select test type]**", ["Two-Tailed", "One-Tailed"])
 
                     with col2:
                         with st.container(border=True):
@@ -399,16 +410,16 @@ if page == "analysis":
                                     if t_stat < 0:
                                         p_value = 1 - p_value
                                 
-                                    st.write("### T-Test Results")
-                                    st.write(f"T-Statistic: {t_stat}")
-                                    st.write(f"P-Value: {p_value}")
-
+                                    st.write("##### T-Test Results")
+                                    t_test_df = pd.DataFrame({"Metric": ["T-Statistic", "P-Value"],"Value": [t_stat, p_value]})
+                                    st.dataframe(t_test_df, hide_index=True)
+                                    st.divider()
                                     if p_value < 0.05:
                                         st.write(f"**Interpretation**: The means of `{numeric_var}` differ significantly between the groups in `{categorical_var}` (at the 5% significance level).")
                                     else:
                                         st.write(f"**Interpretation**: There is no significant difference in the means of `{numeric_var}` between the groups in `{categorical_var}`.")
                             else:
-                                st.warning("Please select a categorical variable with exactly two unique groups for a two-sample T-Test.")
+                                st.warning("**Please select a categorical variable with exactly two unique groups for a two-sample T-Test.**")
         #---------------------------------------------------------------         
         with tab2:
             
@@ -418,7 +429,7 @@ if page == "analysis":
                 with st.container(border=True):
                     
                     cat_vars = selected_df.select_dtypes(include=['object', 'category']).columns
-                    selected_vars = st.multiselect("Select categorical variables for Chi-Square Test", cat_vars)
+                    selected_vars = st.multiselect("**:blue[Select categorical variables]**", cat_vars)
                     
                     with col2:
                         with st.container(border=True):
@@ -428,22 +439,21 @@ if page == "analysis":
                                     for j in range(i + 1, len(selected_vars)):
                                         var1, var2 = selected_vars[i], selected_vars[j]
                                         
+                                        st.markdown(f"##### Chi-Square Test between `{var1}` and `{var2}`")
                                         subcol1, subcol2= st.columns(2)
                                         with subcol1:
                                             
-                                            st.markdown(f"#### Chi-Square Test between `{var1}` and `{var2}`")
                                             contingency_table = pd.crosstab(selected_df[var1], selected_df[var2])
-                                            st.markdown("Contingency Table:")
+                                            st.markdown("Contingency Table")
                                             st.dataframe(contingency_table)
                                         
                                         with subcol2:
                                         
                                             chi2, p, dof, expected = stats.chi2_contingency(contingency_table)
 
-                                            st.write("#### Chi-Square Test Results")
-                                            st.write(f"Chi-Square Statistic: {chi2}")
-                                            st.write(f"Degrees of Freedom: {dof}")
-                                            st.write(f"P-Value: {p}")
+                                            st.markdown("Test Results")
+                                            chi_square_df = pd.DataFrame({"Metric": ["Chi-Square Statistic", "Degrees of Freedom", "P-Value"],"Value": [chi2, dof, p]})
+                                            st.dataframe(chi_square_df, hide_index=True)
                                             st.divider()
                                             if p < 0.05:
                                                 st.write("**Interpretation**: There is a significant association between the variables.")
@@ -456,9 +466,9 @@ if page == "analysis":
             col1, col2= st.columns((0.2,0.8))
             with col1:
                 with st.container(border=True):
-                    
-                    numeric_var = st.selectbox("Select numeric variable for ANOVA", ["None"] + list(selected_df.select_dtypes(include=['int64', 'float64']).columns))
-                    categorical_var = st.selectbox("Select categorical variable for ANOVA", ["None"] + list(selected_df.select_dtypes(include=['object', 'category']).columns))
+                    ""
+                    numeric_var = st.selectbox("**:blue[Select numeric variable]**", ["None"] + list(selected_df.select_dtypes(include=['int64','float64']).columns),key="numeric_var_anova")
+                    categorical_var = st.selectbox("**:blue[Select categorical variable]**", ["None"] + list(selected_df.select_dtypes(include=['object', 'category']).columns),key="categorical_var_anova")
 
                     with col2:
                         with st.container(border=True):
@@ -468,16 +478,17 @@ if page == "analysis":
             
                                 if len(groups) >= 3:
                                     f_statistic, p_value = stats.f_oneway(*groups)
-                                    st.write("#### ANOVA Test Results")
-                                    st.write(f"F-Statistic: {f_statistic}")
-                                    st.write(f"P-Value: {p_value}")
+                                    
+                                    st.write("##### ANOVA Results")
+                                    anova_df = pd.DataFrame({"Metric": ["F-Statistic", "P-Value"],"Value": [f_statistic, p_value]})
+                                    st.dataframe(anova_df, hide_index=True)                                    
                                     st.divider()
                                     if p_value < 0.05:
                                         st.write(f"**Interpretation**: There is a significant difference in `{numeric_var}` between the groups in `{categorical_var}`.")
                                     else:
                                         st.write(f"**Interpretation**: No significant difference in `{numeric_var}` across groups in `{categorical_var}`.")
                             else:
-                                st.warning("Please select a categorical variable with three or more unique groups.")
+                                st.warning("**Please select a categorical variable with three or more unique groups.**")
         #---------------------------------------------------------------         
         with tab4:
             
@@ -486,8 +497,8 @@ if page == "analysis":
             with col1:
                 with st.container(border=True):
                     
-                    numeric_var_mw = st.selectbox("Select numeric variable for Mann-Whitney", ["None"] + list(selected_df.select_dtypes(include=['int64', 'float64']).columns),key="numeric_var_mw")
-                    categorical_var_mw = st.selectbox("Select categorical variable for Mann-Whitney", ["None"] + list(selected_df.select_dtypes(include=['object', 'category']).columns),key="categorical_var_mw")
+                    numeric_var_mw = st.selectbox("**:blue[Select numeric variable]**", ["None"] + list(selected_df.select_dtypes(include=['int64','float64']).columns),key="numeric_var_mw")
+                    categorical_var_mw = st.selectbox("**:blue[Select categorical variable]**", ["None"] + list(selected_df.select_dtypes(include=['object','category']).columns),key="categorical_var_mw")
 
                     with col2:
                         with st.container(border=True):
@@ -500,17 +511,17 @@ if page == "analysis":
                                     group2 = selected_df[selected_df[categorical_var_mw] == unique_groups[1]][numeric_var_mw]
 
                                     u_statistic, p_value = stats.mannwhitneyu(group1, group2, alternative='two-sided')
-                                    st.write("### Mann-Whitney U Test Results")
-                                    st.write(f"U-Statistic: {u_statistic}")
-                                    st.write(f"P-Value: {p_value}")
-
+                                    
+                                    st.write("##### Mann-Whitney (U Statistics) Test Results")
+                                    mw_df = pd.DataFrame({"Metric": ["U-Statistic", "P-Value"],"Value": [u_statistic, p_value]})
+                                    st.dataframe(mw_df, hide_index=True)                                    
+                                    st.divider()
                                     if p_value < 0.05:
                                         st.write(f"**Interpretation**: The distribution of `{numeric_var_mw}` differs significantly between the two groups in `{categorical_var_mw}`.")
                                     else:
                                         st.write(f"**Interpretation**: No significant difference in `{numeric_var}` distribution between the groups in `{categorical_var_mw}`.")
                             else:
-                                st.warning("Please select a categorical variable with exactly two unique groups.")
-                                
+                                st.warning("**Please select a categorical variable with exactly two unique groups.**")                
         #---------------------------------------------------------------         
         with tab5:
             
@@ -519,8 +530,8 @@ if page == "analysis":
             with col1:
                 with st.container(border=True):
                     
-                    numeric_var= st.selectbox("Select numeric variable for Mann-Whitney", ["None"] + list(selected_df.select_dtypes(include=['int64', 'float64']).columns),key="numeric_var_kw")
-                    categorical_var = st.selectbox("Select categorical variable for Mann-Whitney", ["None"] + list(selected_df.select_dtypes(include=['object', 'category']).columns),key="categorical_var_kw")
+                    numeric_var= st.selectbox("**:blue[Select numeric variable]**", ["None"] + list(selected_df.select_dtypes(include=['int64', 'float64']).columns),key="numeric_var_kw")
+                    categorical_var = st.selectbox("**:blue[Select categorical variable]**", ["None"] + list(selected_df.select_dtypes(include=['object', 'category']).columns),key="categorical_var_kw")
 
                     with col2:
                         with st.container(border=True):
@@ -530,38 +541,22 @@ if page == "analysis":
             
                                 if len(groups) >= 3:
                                     h_statistic, p_value = stats.kruskal(*groups)
-                                    st.write("#### Kruskal-Wallis Test Results")
-                                    st.write(f"H-Statistic: {h_statistic}")
-                                    st.write(f"P-Value: {p_value}")
+                                    
+                                    st.write("##### Kruskal-Wallis Test Results")
 
+                                    kw_df = pd.DataFrame({"Metric": ["h-Statistic", "P-Value"],"Value": [h_statistic, p_value]})
+                                    st.dataframe(mw_df, hide_index=True)                                    
+                                    st.divider()
                                     if p_value < 0.05:
                                         st.write(f"**Interpretation**: The distribution of `{numeric_var}` differs significantly across groups in `{categorical_var}`.")
                                     else:
                                         st.write(f"**Interpretation**: No significant difference in `{numeric_var}` distribution across groups in `{categorical_var}`.")
                             else:
-                                st.warning("Please select a categorical variable with three or more unique groups.")
+                                st.warning("**Please select a categorical variable with three or more unique groups.**")
         #-----------------------------------------------------------------------------------------------------------------------------------------------    
-        st.markdown(
-            """
-            <style>
-                .centered-info {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-weight: bold;
-                font-size: 15px;
-                color: #007BFF; 
-                padding: 5px;
-                background-color: #E8F4FF; 
-                border-radius: 5px;
-                border: 1px solid #007BFF;
-                margin-top: 5px;
-                }
-            </style>
-            """,unsafe_allow_html=True,)
         st.markdown('<div class="centered-info"><span style="margin-left: 10px;">Visualization</span></div>',unsafe_allow_html=True,)
         #--------------------------------------------------------------- 
-        num_plots = st.selectbox("Select the number of plots to generate", [1, 2, 3, 4], index=0)
+        num_plots = st.selectbox("**:blue[Select the number of plots to generate]**", [1, 2, 3, 4], index=0)
 
         for i in range(num_plots):
             st.write(f"#### Plot {i + 1}")
@@ -570,16 +565,16 @@ if page == "analysis":
             with left_col:
                 with st.container(border=True):
                 
-                    selected_var = st.selectbox(f"Select Y variable for Plot {i + 1}", selected_df.columns, key=f"y_{i}")
-                    secondary_var = st.selectbox(f"Select X variable for Plot {i + 1} (optional)", ["None"] + list(selected_df.columns), key=f"x_{i}")
-                    group_by_var = st.selectbox(f"Select a grouping variable for Plot {i + 1} (optional)", ["None"] + list(selected_df.columns), key=f"group_{i}")
+                    selected_var = st.selectbox("**:blue[Select Y variable]**", selected_df.columns, key=f"y_{i}")
+                    secondary_var = st.selectbox("**:blue[Select X variable (optional)]**", ["None"] + list(selected_df.columns), key=f"x_{i}")
+                    group_by_var = st.selectbox("**:blue[Select a grouping variable (optional)]**", ["None"] + list(selected_df.columns), key=f"group_{i}")
 
                     if secondary_var == "None":
                         plot_options = ["Histogram Plot", "Bar Plot", "Box Plot"]  
                     else:
                         plot_options = ["Histogram Plot", "Scatter Plot", "Line Plot", "Regression Plot", "Bar Plot", "Box Plot"]
 
-                    plot_type = st.radio(f"Select Plot Type for Plot {i + 1}", plot_options, index=0, key=f"type_{i}")
+                    plot_type = st.radio("**:blue[Select Plot Type]**", plot_options, index=0, key=f"type_{i}")
                     if plot_type in ["Scatter Plot", "Line Plot", "Regression Plot"] and secondary_var == "None":
                         st.warning(f"{plot_type} requires both a Y and an X variable. Please select a secondary variable (X) for this plot type.")
     
@@ -588,8 +583,8 @@ if page == "analysis":
                         aggregation_function = st.selectbox(f"Select aggregation function for Plot", ["sum", "avg", "count", "min", "max"], key=f"agg_func_{i}")
 
                     default_title = f"{plot_type} of {selected_var}" + (f" vs {secondary_var}" if secondary_var != "None" else "") + (f" grouped by {group_by_var}" if group_by_var != "None" else "")
-                    plot_title = st.text_input(f"Set title for Plot {i + 1}", value=default_title, key=f"title_{i}")
-                    plot_theme = st.selectbox(f"Select Plot Theme for Plot {i + 1}", ["ggplot2", "seaborn", "simple_theme", "none"], key=f"theme_{i}")
+                    plot_title = st.text_input("**:blue[Set title for Plot]**", value=default_title, key=f"title_{i}")
+                    plot_theme = st.selectbox("**:blue[Select Plot Theme]**", ["ggplot2", "seaborn", "simple_theme", "none"], key=f"theme_{i}")
                     theme = {"ggplot2": "ggplot2", "seaborn": "plotly_white", "simple_theme": "simple_white", "none": None}.get(plot_theme)
 
                     grouping_vars = [var for var in [secondary_var, group_by_var] if var != "None"]
@@ -614,7 +609,6 @@ if page == "analysis":
 
             with right_col:
                 
-                    
                     if plot_type == "Histogram Plot":
                         fig = px.histogram(aggregated_data, x=selected_var, color=group_by_var if group_by_var != "None" else None, nbins=30, template=theme,
                                    title=plot_title)
