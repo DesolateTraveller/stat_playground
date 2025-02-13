@@ -19,6 +19,7 @@ import plotly.figure_factory as ff
 import plotly.graph_objs as go
 #----------------------------------------
 import scipy.stats as stats
+from scipy.stats import gaussian_kde
 #---------------------------------------------------------------------------------------------------------------------------------
 ### Title and description for your Streamlit app
 #---------------------------------------------------------------------------------------------------------------------------------
@@ -120,6 +121,30 @@ def get_plotly_download(fig, file_format="png", scale=3):
         buffer = BytesIO(html_str.getvalue().encode("utf-8"))
         buffer.seek(0)
     return buffer
+
+@st.cache_data(ttl="2h")
+def plot_histograms_with_kde(df):
+    numerical_columns = df.select_dtypes(include=['float64', 'int64']).columns
+    if len(numerical_columns) == 0:
+        st.warning("No numerical columns found in the dataset to plot.")
+        return
+    for col in numerical_columns:
+        with st.container():
+            fig, ax = plt.subplots(figsize=(25,5))
+            data = df[col].dropna()
+            ax.hist(data, bins=20, color='skyblue', edgecolor='black', alpha=0.6, density=True)
+            if len(data.unique()) > 1 and data.var() > 0:
+                kde = gaussian_kde(data)
+                x_vals = np.linspace(data.min(), data.max(), 1000)
+                ax.plot(x_vals, kde(x_vals), color='red', lw=2, label='KDE')
+            else:
+                st.warning(f"KDE could not be computed for column '{col}' due to low variance.")
+            ax.set_title(f'Distribution of {col}')
+            ax.set_xlabel(col)
+            ax.set_ylabel('Density')
+            ax.grid(True)
+            ax.legend()
+            st.pyplot(fig, use_container_width=True)
 #---------------------------------------------------------------------------------------------------------------------------------
 ### Main app
 #---------------------------------------------------------------------------------------------------------------------------------
@@ -142,30 +167,43 @@ page = st.session_state.current_page
 
 if page == "home":
     
-    with st.container(border=True):
+    col1, col2 = st.columns((0.55,0.45))
+    with col1: 
+   
+        st.markdown("""
+        <div style="background-color: #F9F9FB; padding: 10px; border-radius: 8px; margin-top: 20px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);">    
+            <h5 style="color: #0056b3; font-weight: bold;">Description</h5>
+            <ul style="color: #333333; font-size: 24px,padding-left: 15px; margin: 10px 0;">
+                <li>Statistics Playground provides an intuitive, user-friendly interface for comprehensive statistical analysis and visualization.</li>
+                <li>Designed to simplify complex data analysis tasks, it empowers researchers and social scientists to explore, visualize, and 
+                interpret data effortlessly without requiring programming skills.</li>
+                <li>Supporting various statistical tests, including T-tests, Chi-Square, ANOVA, and correlation analysis</li>
+                <li>Statistics Playground enables users to investigate relationships within datasets.</li>
+                <li>Its customizable visualizations, proportion tables, and weighted calculations make it ideal for examining survey responses, 
+                demographic distributions, and experimental results.</li>
+                <li> With flexible data uploads and export options, Statistics Playground ensures a seamless analytical experience, 
+                providing valuable insights for data-driven decision-making.</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
 
-        st.info(
-            """
-            Statistics Playground provides an intuitive, user-friendly interface for comprehensive statistical analysis and visualization. /n
-            Designed to simplify complex data analysis tasks, Statistics Playground empowers researchers and social scientists to explore, visualize, and interpret their data without needing programming skills. 
-            By supporting diverse statistical tests, including T-tests, Chi-Square, ANOVA, and correlation analysis, Statistics Playground offers the tools to investigate relationships within data. 
-            Its customizable visualizations, proportion tables, and weighted calculations make it ideal for in-depth examination of survey responses, demographic distributions, and experimental results. 
-            Statistics Playground’s flexibility, combined with easy data uploads and export options, ensures a seamless analytical experience tailored for effective, data-driven insights.
-        """)
-
-    stats_expander = st.expander("**:red[Key Features]**", expanded=True)
-    with stats_expander:       
-            st.info('''
-                       
-            - Data Subsetting & Filtering: Easily refine your dataset by selecting specific rows and columns for analysis.
-            - Proportion Tables & Weighted Analysis: Generate proportion tables with optional weighted calculations for accurate survey data interpretation.
-            - Comprehensive Statistical Tests: Perform T-tests, Chi-Square, ANOVA, and more to analyze relationships within your data.
-            - Descriptive Statistics & Correlation Analysis: Gain detailed insight into your dataset through summary statistics and correlation matrices.
-            - Versatile Visualization Tools: Create histograms, scatter plots, line plots, regression plots, and box plots with options for customization.
-            - Aggregation Functions: Apply sum, mean, count, and other aggregation functions to streamline data summaries.
-            - High-Quality Export Options: Download visualizations in high-resolution PNG or interactive HTML formats for reporting and sharing.
-            
-            ''')
+    with col2:  
+              
+        st.markdown("""
+        <div style="background-color: #F9F9FB; padding: 10px; border-radius: 8px; margin-top: 20px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);">    
+            <h5 style="color: #0056b3; font-weight: bold;">Application</h5>
+            <ul style="color: #333333; font-size: 24px,padding-left: 15px; margin: 10px 0;">
+                <li><b>🔍 Data Subsetting & Filtering:</b> Generate proportion tables with optional weighted calculations for accurate survey data interpretation.</li>
+                <li><b>📊 Proportion Tables & Weighted Analysis:</b> Perform T-tests, Chi-Square, ANOVA, and more to analyze relationships within your data.</li>
+                <li><b>📈 Comprehensive Statistical Tests:</b> Gain detailed insights through summary statistics and correlation matrices.</li>
+                <li><b>📉 Descriptive Statistics & Correlation Analysis:</b> Create histograms, scatter plots, line plots, regression plots, and box plots with customizable options.</li>
+                <li><b>🔢 Aggregation Functions:</b> Apply sum, mean, count, and other aggregation functions to streamline data summaries.</li>
+                <li><b>📥 High-Quality Export Options:</b> Download visualizations in high-resolution PNG or interactive HTML formats for reporting and sharing.</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    st.divider()
+    st.warning("Please **click** the **Analysis** button above for further details", icon="🚨")         
 #---------------------------------------------------------------------------------------------------------------------------------
 
 if page == "analysis":
@@ -213,13 +251,8 @@ if page == "analysis":
             st.session_state.clear()
             initialize_session_state()
         #---------------------------------------------------------------
-        col1, col2 = st.columns((0.8,0.2))
-        with col1:
-            with st.container(border=True):
-                selected_columns = st.sidebar.multiselect("**:blue[Columns to display]**", options=df.columns, default=st.session_state.selected_columns, key="selected_columns") 
-        with col2:   
-            with st.container(border=True):
-                subset_option = st.sidebar.selectbox("**:blue[Subset Data Options]**", ["No Subset", "Enable Subset"])
+        selected_columns = st.sidebar.multiselect("**:blue[Columns to display]**", options=df.columns, default=st.session_state.selected_columns, key="selected_columns") 
+        subset_option = st.sidebar.selectbox("**:blue[Subset Data Options]**", ["No Subset", "Enable Subset"])
         #---------------------------------------------------------------
         selected_df = df[selected_columns].copy()
         #---------------------------------------------------------------
@@ -230,7 +263,7 @@ if page == "analysis":
                 for col in selected_df.columns:
                     if pd.api.types.is_numeric_dtype(selected_df[col]):
 
-                        st.write(f"#### Filter for Numeric Column: {col}")
+                        st.write(f"##### Filter for Numeric Column: {col}")
                         filter_mode = st.selectbox(f"Filter type for {col}", ["Range", "Single Value"], key=f"filter_mode_{col}")
                         st.session_state.filter_mode[col] = filter_mode
 
@@ -252,14 +285,14 @@ if page == "analysis":
 
                             if operator == "<":
                                 selected_df = selected_df[selected_df[col] < single_val]
-                        elif operator == ">":
-                            selected_df = selected_df[selected_df[col] > single_val]
-                        elif operator == "=":
-                            selected_df = selected_df[selected_df[col] == single_val]
-
+                            elif operator == ">":
+                                selected_df = selected_df[selected_df[col] > single_val]
+                            elif operator == "=":
+                                selected_df = selected_df[selected_df[col] == single_val]
+                        st.write('--')
                     elif pd.api.types.is_object_dtype(selected_df[col]) or pd.api.types.is_categorical_dtype(selected_df[col]):
                     
-                        st.write(f"#### Filter for Categorical Column: {col}")
+                        st.write(f"##### Filter for Categorical Column: {col}")
                         unique_vals = selected_df[col].dropna().unique()
                         selected_vals = st.multiselect(f"Select values for {col}:", options=unique_vals, default=unique_vals, key=f"filter_{col}")
                         st.session_state.categorical_filters[col] = selected_vals
@@ -283,7 +316,7 @@ if page == "analysis":
             col2.metric('**variables (columns)**', selected_df.shape[1], help='number of columns')     
             col3.metric('**numerical variables**', len(selected_df.select_dtypes(include=['float64', 'int64']).columns), help='number of numerical variables')
             col4.metric('**categorical variables**', len(selected_df.select_dtypes(include=['object']).columns), help='number of categorical variables')
-            col5.metric('**Missing values**', selected_df.isnull().sum().sum(), help='Total missing values in the dataset')
+            col5.metric('**missing values**', selected_df.isnull().sum().sum(), help='Total missing values in the dataset')
             #col6.metric('**Unique categorical values**', sum(df.select_dtypes(include=['object']).nunique()), help='Sum of unique values in categorical variables')
          
         colSUM, colType, col3 = st.columns((0.4,0.2,0.4))
@@ -366,7 +399,7 @@ if page == "analysis":
                         st.markdown("**Categorical Correlations**")
                         st.dataframe(proportion_table)
                     else:
-                        st.warning("Please select at least one categorical variable to generate the proportion table.")
+                        st.warning("Please select at least one categorical variable to generate the categorical proportion table.")
                         
             with colnumPropTable: 
                 with st.container(border=True):   
@@ -556,6 +589,13 @@ if page == "analysis":
         #-----------------------------------------------------------------------------------------------------------------------------------------------    
         st.markdown('<div class="centered-info"><span style="margin-left: 10px;">Visualization</span></div>',unsafe_allow_html=True,)
         #--------------------------------------------------------------- 
+            
+        stats_expander = st.expander("**:blue[Density Distribution Plot]**", expanded=False)
+        with stats_expander: 
+                    plot_histograms_with_kde(selected_df)
+
+        st.divider()
+        
         num_plots = st.selectbox("**:blue[Select the number of plots to generate]**", [1, 2, 3, 4], index=0)
 
         for i in range(num_plots):
@@ -565,8 +605,8 @@ if page == "analysis":
             with left_col:
                 with st.container(border=True):
                 
-                    selected_var = st.selectbox("**:blue[Select Y variable]**", selected_df.columns, key=f"y_{i}")
-                    secondary_var = st.selectbox("**:blue[Select X variable (optional)]**", ["None"] + list(selected_df.columns), key=f"x_{i}")
+                    selected_var = st.selectbox("**:blue[Select X variable]**", selected_df.columns, key=f"x_{i}")
+                    secondary_var = st.selectbox("**:blue[Select Y variable (optional)]**", ["None"] + list(selected_df.columns), key=f"y_{i}")
                     group_by_var = st.selectbox("**:blue[Select a grouping variable (optional)]**", ["None"] + list(selected_df.columns), key=f"group_{i}")
 
                     if secondary_var == "None":
