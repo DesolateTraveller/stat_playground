@@ -48,7 +48,7 @@ st.markdown(
     }
     </style>
     <div class="title-large">Statistics Playground</div>
-    <div class="title-small">Play with Data</div>
+    <div class="title-small">Play with Data | v0.1</div>
     """,
     unsafe_allow_html=True
 )
