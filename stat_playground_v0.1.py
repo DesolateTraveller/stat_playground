@@ -55,7 +55,6 @@ st.markdown(
 #----------------------------------------
 
 st.markdown(
-st.markdown(
     """
     <style>
     .footer {
