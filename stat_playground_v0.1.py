@@ -79,7 +79,7 @@ st.markdown(
     </style>
 
     <div class="footer">
-        <p>© 2026 | Created by : <span class="highlight">Avijit Chakraborty</span> | <a href="mailto:avijit.mba18@gmail.com"> 📩 </a>  <span class="highlight">Thank you for visiting the app | Unauthorized uses or copying is strictly prohibited | For best view of the app, please zoom out the browser to 75%.</span> </p>
+        <p>© 2026 | Created by : <span class="highlight">Avijit Chakraborty</span> <a href="mailto:avijit.mba18@gmail.com"> 📩 </a> | <span class="highlight">Thank you for visiting the app | Unauthorized uses or copying is strictly prohibited | For best view of the app, please zoom out the browser to 75%.</span> </p>
     </div>
     """,
     unsafe_allow_html=True)
@@ -676,3 +676,4 @@ if page == "analysis":
 
                     #st.download_button(label="Download as PNG (High Quality)",data=png_buffer,file_name=f"plot_{i + 1}.png",mime="image/png")
                     #st.download_button(label="Download as HTML (Interactive)",data=html_buffer,file_name=f"plot_{i + 1}.html",mime="text/html")
+
