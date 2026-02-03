@@ -166,127 +166,247 @@ page = st.session_state.current_page
 #---------------------------------------------------------------------------------------------------------------------------------
 
 if page == "home":
-    # Section header with visual separation
+    # ===== PAGE HEADER =====
     st.markdown("""
-    <div style="text-align: center; padding: 10px 0; margin-bottom: 25px;">
-        <h2 style="color: #0056b3; font-weight: 700; margin-bottom: 8px;">✨ Statistics Playground</h2>
-        <p style="color: #666; font-size: 1.1rem; max-width: 700px; margin: 0 auto;">
-            Your intuitive gateway to powerful statistical analysis—no coding required
+    <div style="text-align: center; padding: 25px 0; margin-bottom: 40px; background: linear-gradient(120deg, #f8fbff 0%, #eef5ff 100%); border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 30, 80, 0.08);">
+        <h1 style="color: #004a96; font-weight: 800; font-size: 3.2rem; margin-bottom: 15px; background: linear-gradient(to right, #0056b3, #0d4a96); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            📊 Statistics Playground
+        </h1>
+        <p style="color: #4a5568; font-size: 1.4rem; max-width: 800px; margin: 0 auto; line-height: 1.6; padding: 0 20px;">
+            Transform complex data into clear insights with zero coding required. 
+            <span style="color: #0056b3; font-weight: 600;">Trusted by researchers, analysts, and educators worldwide.</span>
         </p>
     </div>
     """, unsafe_allow_html=True)
-    
-    col1, col2 = st.columns((0.55, 0.45), gap="large")
-    
-    # Description Card (with relevant icons added for visual scanning)
-    with col1: 
-        st.markdown("""
-        <div class="stat-card">
-            <div class="card-header">
-                <span class="icon">📋</span>
-                <h3>Description</h3>
-            </div>
-            <ul class="card-content">
-                <li><span class="bullet">🎯</span> Intuitive interface for comprehensive statistical analysis and visualization</li>
-                <li><span class="bullet">✨</span> Simplifies complex tasks for researchers and social scientists—zero programming skills needed</li>
-                <li><span class="bullet">🔬</span> Supports T-tests, Chi-Square, ANOVA, correlation analysis, and more</li>
-                <li><span class="bullet">💡</span> Investigate relationships and uncover insights within your datasets</li>
-                <li><span class="bullet">🎨</span> Customizable visualizations, proportion tables, and weighted calculations for survey/demographic analysis</li>
-                <li><span class="bullet">🚀</span> Flexible uploads and export options for seamless data-driven decision-making</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
 
-    # Application Card (enhanced visual hierarchy)
-    with col2:  
-        st.markdown("""
-        <div class="stat-card">
-            <div class="card-header">
-                <span class="icon">⚡</span>
-                <h3>Key Features</h3>
-            </div>
-            <ul class="card-content">
-                <li><b>🔍 Smart Filtering:</b> Generate weighted proportion tables for accurate survey interpretation</li>
-                <li><b>📊 Advanced Tests:</b> Run T-tests, Chi-Square, ANOVA, and correlation analyses with one click</li>
-                <li><b>📈 Insight Engine:</b> Summary statistics + correlation matrices for deep data understanding</li>
-                <li><b>🎨 Visual Studio:</b> Create histograms, scatter plots, regression plots, and box plots with customization</li>
-                <li><b>🧮 Aggregation Toolkit:</b> Sum, mean, count, and custom functions for efficient data summarization</li>
-                <li><b>📤 Publication-Ready Exports:</b> Download visuals as high-res PNG or interactive HTML</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+    # ===== DESCRIPTION SECTION =====
+    st.markdown('<div class="section-header"><h2>🌟 What is Statistics Playground?</h2><div class="section-divider"></div></div>', unsafe_allow_html=True)
     
-    # Custom CSS for professional card styling
+    desc_points = [
+        ("🎯", "Intuitive Interface", "User-friendly workspace for comprehensive statistical analysis and visualization without technical barriers"),
+        ("✨", "Democratized Analytics", "Empowers researchers and social scientists to explore, visualize, and interpret data effortlessly"),
+        ("🔬", "Robust Statistical Engine", "Supports T-tests, Chi-Square, ANOVA, correlation analysis, and advanced hypothesis testing"),
+        ("💡", "Relationship Discovery", "Uncover hidden patterns and meaningful connections within complex datasets"),
+        ("🎨", "Survey-Ready Tools", "Customizable visualizations, weighted proportion tables, and demographic analysis for survey data"),
+        ("🚀", "Seamless Workflow", "Flexible uploads, one-click exports, and publication-ready outputs for data-driven decisions")
+    ]
+    
+    # Create 2 rows of 3 cards each for Description
+    for i in range(0, 6, 3):
+        cols = st.columns(3, gap="medium")
+        for j in range(3):
+            if i+j < len(desc_points):
+                icon, title, desc = desc_points[i+j]
+                with cols[j]:
+                    st.markdown(f"""
+                    <div class="desc-card">
+                        <div class="desc-icon">{icon}</div>
+                        <h3 class="desc-title">{title}</h3>
+                        <p class="desc-text">{desc}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+    st.markdown("<div style='height: 40px;'></div>", unsafe_allow_html=True)  # Spacer
+    
+    # ===== FEATURES SECTION =====
+    st.markdown('<div class="section-header"><h2>⚡ Powerful Capabilities</h2><div class="section-divider"></div></div>', unsafe_allow_html=True)
+    
+    feature_points = [
+        ("🔍", "Smart Data Filtering", "Create precise subsets with weighted proportion tables for accurate survey interpretation"),
+        ("📊", "Statistical Test Suite", "One-click T-tests, Chi-Square, ANOVA, and correlation analysis with detailed diagnostics"),
+        ("📈", "Insight Dashboard", "Interactive summary statistics and correlation matrices with visual heatmaps"),
+        ("🎨", "Visual Studio", "Custom histograms, scatter plots, regression lines, box plots, and multi-variable charts"),
+        ("🧮", "Aggregation Toolkit", "Dynamic sum, mean, count, and custom functions with group-by capabilities"),
+        ("📤", "Publication Exports", "High-resolution PNG, vector SVG, or interactive HTML exports for reports and presentations")
+    ]
+    
+    # Create 2 rows of 3 cards each for Features (different layout style)
+    for i in range(0, 6, 3):
+        cols = st.columns(3, gap="medium")
+        for j in range(3):
+            if i+j < len(feature_points):
+                icon, title, desc = feature_points[i+j]
+                with cols[j]:
+                    st.markdown(f"""
+                    <div class="feature-card">
+                        <div class="feature-badge">{icon}</div>
+                        <h3 class="feature-title">{title}</h3>
+                        <p class="feature-text">{desc}</p>
+                        <div class="feature-highlight"></div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+    # ===== CTA SECTION =====
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #0056b3 0%, #0d4a96 100%); border-radius: 16px; padding: 35px; margin: 50px 0; text-align: center; box-shadow: 0 10px 30px rgba(0, 86, 179, 0.25);">
+        <h2 style="color: white; font-size: 2.3rem; margin-bottom: 15px; font-weight: 700;">Ready to Unlock Your Data's Potential?</h2>
+        <p style="color: rgba(255,255,255,0.92); font-size: 1.35rem; max-width: 700px; margin: 0 auto 25px; line-height: 1.6;">
+            Join thousands of researchers who transformed their workflow with Statistics Playground
+        </p>
+        <div style="background: rgba(255,255,255,0.15); display: inline-block; padding: 8px 28px; border-radius: 50px; color: white; font-weight: 600; font-size: 1.25rem; margin-top: 10px;">
+            ✨ Click "Analysis" in the sidebar to begin your journey ✨
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ===== CUSTOM CSS =====
     st.markdown("""
     <style>
-    .stat-card {
-        background: linear-gradient(145deg, #ffffff, #f8f9ff);
-        border-radius: 16px;
-        box-shadow: 0 10px 30px -15px rgba(0, 0, 100, 0.25);
-        padding: 28px;
-        margin-top: 15px;
-        border: 1px solid rgba(0, 86, 179, 0.12);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        height: 100%;
+    /* Section Headers */
+    .section-header {
+        text-align: center;
+        margin: 50px 0 35px;
+        position: relative;
     }
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 35px -12px rgba(0, 86, 179, 0.35);
-    }
-    .card-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 22px;
+    .section-header h2 {
+        color: #004a96;
+        font-weight: 800;
+        font-size: 2.4rem;
+        display: inline-block;
+        position: relative;
         padding-bottom: 12px;
-        border-bottom: 2px solid #eef2ff;
     }
-    .card-header .icon {
-        font-size: 1.8rem;
-        margin-right: 12px;
-        background: linear-gradient(135deg, #0056b3, #0d4a96);
-        width: 42px;
-        height: 42px;
-        border-radius: 50%;
+    .section-header h2:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(to right, #0056b3, #4da6ff);
+        border-radius: 2px;
+    }
+    
+    /* Description Cards - Clean & Professional */
+    .desc-card {
+        background: white;
+        border-radius: 16px;
+        padding: 28px 25px;
+        box-shadow: 0 6px 18px rgba(0, 30, 80, 0.09);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        height: 100%;
+        border: 1px solid rgba(0, 86, 179, 0.08);
+        position: relative;
+        overflow: hidden;
+    }
+    .desc-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 28px rgba(0, 30, 80, 0.18);
+        border-color: rgba(0, 86, 179, 0.25);
+    }
+    .desc-card:hover:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, #0056b3, #4da6ff);
+    }
+    .desc-icon {
+        font-size: 2.8rem;
+        margin-bottom: 18px;
+        display: block;
+        text-align: center;
+        color: #0056b3;
+        font-weight: bold;
+        line-height: 1;
+    }
+    .desc-title {
+        font-size: 1.55rem;
+        color: #004a96;
+        font-weight: 700;
+        margin: 0 0 14px;
+        text-align: center;
+        line-height: 1.3;
+    }
+    .desc-text {
+        color: #4a5568;
+        font-size: 1.12rem;
+        line-height: 1.65;
+        text-align: center;
+        margin: 0;
+        padding: 0 8px;
+    }
+    
+    /* Feature Cards - Vibrant & Energetic */
+    .feature-card {
+        background: linear-gradient(145deg, #f9fbfd 0%, #f0f5ff 100%);
+        border-radius: 16px;
+        padding: 30px 25px;
+        box-shadow: 0 6px 20px rgba(23, 162, 184, 0.12);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        height: 100%;
+        border: 1px solid rgba(23, 162, 184, 0.15);
+        position: relative;
+        overflow: hidden;
+    }
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 14px 32px rgba(23, 162, 184, 0.25);
+        background: linear-gradient(145deg, #f0f7ff 0%, #e6f2ff 100%);
+        border-color: rgba(23, 162, 184, 0.35);
+    }
+    .feature-card:hover .feature-badge {
+        transform: scale(1.15) rotate(5deg);
+        box-shadow: 0 0 25px rgba(23, 162, 184, 0.4);
+    }
+    .feature-badge {
+        width: 68px;
+        height: 68px;
+        background: linear-gradient(135deg, #0d4a96 0%, #0056b3 100%);
+        border-radius: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 2.4rem;
         color: white;
-        flex-shrink: 0;
+        font-weight: bold;
+        box-shadow: 0 4px 15px rgba(0, 86, 179, 0.25);
+        transition: all 0.35s ease;
     }
-    .card-header h3 {
+    .feature-title {
+        font-size: 1.5rem;
         color: #004a96;
         font-weight: 700;
-        font-size: 1.65rem;
+        margin: 0 0 15px;
+        text-align: center;
+        line-height: 1.35;
+    }
+    .feature-text {
+        color: #2d3748;
+        font-size: 1.1rem;
+        line-height: 1.65;
+        text-align: center;
         margin: 0;
-        letter-spacing: -0.5px;
+        padding: 0 10px;
+        min-height: 70px;
     }
-    .card-content {
-        color: #333;
-        font-size: 1.05rem;
-        line-height: 1.7;
-        padding-left: 10px;
-        margin: 0;
+    .feature-highlight {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, #17a2b8, #28a745, #ffc107);
     }
-    .card-content li {
-        margin-bottom: 14px;
-        padding-left: 5px;
-        position: relative;
+    
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+        .desc-title, .feature-title { font-size: 1.4rem; }
+        .desc-text, .feature-text { font-size: 1.05rem; }
+        .desc-icon, .feature-badge { font-size: 2.3rem; width: 60px; height: 60px; }
     }
-    .bullet {
-        font-size: 1.25rem;
-        margin-right: 8px;
-        vertical-align: middle;
-        font-weight: bold;
-    }
-    .card-content b {
-        color: #0056b3;
-        font-weight: 600;
+    @media (max-width: 600px) {
+        .section-header h2 { font-size: 2rem; }
+        .desc-card, .feature-card { padding: 22px 18px; }
+        .desc-title, .feature-title { font-size: 1.35rem; }
+        .desc-text, .feature-text { font-size: 1rem; min-height: auto; }
     }
     </style>
     """, unsafe_allow_html=True)
-    
-    st.divider()
-    st.info("💡 **Pro Tip:** Navigate to the **Analysis** tab to upload your dataset and start exploring insights instantly!", icon="✨")
           
 #---------------------------------------------------------------------------------------------------------------------------------
 
