@@ -166,44 +166,128 @@ page = st.session_state.current_page
 #---------------------------------------------------------------------------------------------------------------------------------
 
 if page == "home":
+    # Section header with visual separation
+    st.markdown("""
+    <div style="text-align: center; padding: 10px 0; margin-bottom: 25px;">
+        <h2 style="color: #0056b3; font-weight: 700; margin-bottom: 8px;">✨ Statistics Playground</h2>
+        <p style="color: #666; font-size: 1.1rem; max-width: 700px; margin: 0 auto;">
+            Your intuitive gateway to powerful statistical analysis—no coding required
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    col1, col2 = st.columns((0.55,0.45))
+    col1, col2 = st.columns((0.55, 0.45), gap="large")
+    
+    # Description Card (with relevant icons added for visual scanning)
     with col1: 
-   
         st.markdown("""
-        <div style="background-color: #F9F9FB; padding: 10px; border-radius: 8px; margin-top: 20px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);">    
-            <h5 style="color: #0056b3; font-weight: bold;">Description</h5>
-            <ul style="color: #333333; font-size: 24px,padding-left: 15px; margin: 10px 0;">
-                <li>Statistics Playground provides an intuitive, user-friendly interface for comprehensive statistical analysis and visualization.</li>
-                <li>Designed to simplify complex data analysis tasks, it empowers researchers and social scientists to explore, visualize, and 
-                interpret data effortlessly without requiring programming skills.</li>
-                <li>Supporting various statistical tests, including T-tests, Chi-Square, ANOVA, and correlation analysis</li>
-                <li>Statistics Playground enables users to investigate relationships within datasets.</li>
-                <li>Its customizable visualizations, proportion tables, and weighted calculations make it ideal for examining survey responses, 
-                demographic distributions, and experimental results.</li>
-                <li> With flexible data uploads and export options, Statistics Playground ensures a seamless analytical experience, 
-                providing valuable insights for data-driven decision-making.</li>
+        <div class="stat-card">
+            <div class="card-header">
+                <span class="icon">📋</span>
+                <h3>Description</h3>
+            </div>
+            <ul class="card-content">
+                <li><span class="bullet">🎯</span> Intuitive interface for comprehensive statistical analysis and visualization</li>
+                <li><span class="bullet">✨</span> Simplifies complex tasks for researchers and social scientists—zero programming skills needed</li>
+                <li><span class="bullet">🔬</span> Supports T-tests, Chi-Square, ANOVA, correlation analysis, and more</li>
+                <li><span class="bullet">💡</span> Investigate relationships and uncover insights within your datasets</li>
+                <li><span class="bullet">🎨</span> Customizable visualizations, proportion tables, and weighted calculations for survey/demographic analysis</li>
+                <li><span class="bullet">🚀</span> Flexible uploads and export options for seamless data-driven decision-making</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
 
+    # Application Card (enhanced visual hierarchy)
     with col2:  
-              
         st.markdown("""
-        <div style="background-color: #F9F9FB; padding: 10px; border-radius: 8px; margin-top: 20px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);">    
-            <h5 style="color: #0056b3; font-weight: bold;">Application</h5>
-            <ul style="color: #333333; font-size: 24px,padding-left: 15px; margin: 10px 0;">
-                <li><b>🔍 Data Subsetting & Filtering:</b> Generate proportion tables with optional weighted calculations for accurate survey data interpretation.</li>
-                <li><b>📊 Proportion Tables & Weighted Analysis:</b> Perform T-tests, Chi-Square, ANOVA, and more to analyze relationships within your data.</li>
-                <li><b>📈 Comprehensive Statistical Tests:</b> Gain detailed insights through summary statistics and correlation matrices.</li>
-                <li><b>📉 Descriptive Statistics & Correlation Analysis:</b> Create histograms, scatter plots, line plots, regression plots, and box plots with customizable options.</li>
-                <li><b>🔢 Aggregation Functions:</b> Apply sum, mean, count, and other aggregation functions to streamline data summaries.</li>
-                <li><b>📥 High-Quality Export Options:</b> Download visualizations in high-resolution PNG or interactive HTML formats for reporting and sharing.</li>
+        <div class="stat-card">
+            <div class="card-header">
+                <span class="icon">⚡</span>
+                <h3>Key Features</h3>
+            </div>
+            <ul class="card-content">
+                <li><b>🔍 Smart Filtering:</b> Generate weighted proportion tables for accurate survey interpretation</li>
+                <li><b>📊 Advanced Tests:</b> Run T-tests, Chi-Square, ANOVA, and correlation analyses with one click</li>
+                <li><b>📈 Insight Engine:</b> Summary statistics + correlation matrices for deep data understanding</li>
+                <li><b>🎨 Visual Studio:</b> Create histograms, scatter plots, regression plots, and box plots with customization</li>
+                <li><b>🧮 Aggregation Toolkit:</b> Sum, mean, count, and custom functions for efficient data summarization</li>
+                <li><b>📤 Publication-Ready Exports:</b> Download visuals as high-res PNG or interactive HTML</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
+    
+    # Custom CSS for professional card styling
+    st.markdown("""
+    <style>
+    .stat-card {
+        background: linear-gradient(145deg, #ffffff, #f8f9ff);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px -15px rgba(0, 0, 100, 0.25);
+        padding: 28px;
+        margin-top: 15px;
+        border: 1px solid rgba(0, 86, 179, 0.12);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px -12px rgba(0, 86, 179, 0.35);
+    }
+    .card-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 22px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #eef2ff;
+    }
+    .card-header .icon {
+        font-size: 1.8rem;
+        margin-right: 12px;
+        background: linear-gradient(135deg, #0056b3, #0d4a96);
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        flex-shrink: 0;
+    }
+    .card-header h3 {
+        color: #004a96;
+        font-weight: 700;
+        font-size: 1.65rem;
+        margin: 0;
+        letter-spacing: -0.5px;
+    }
+    .card-content {
+        color: #333;
+        font-size: 1.05rem;
+        line-height: 1.7;
+        padding-left: 10px;
+        margin: 0;
+    }
+    .card-content li {
+        margin-bottom: 14px;
+        padding-left: 5px;
+        position: relative;
+    }
+    .bullet {
+        font-size: 1.25rem;
+        margin-right: 8px;
+        vertical-align: middle;
+        font-weight: bold;
+    }
+    .card-content b {
+        color: #0056b3;
+        font-weight: 600;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     st.divider()
-    st.warning("Please **click** the **Analysis** button above for further details", icon="🚨")         
+    st.info("💡 **Pro Tip:** Navigate to the **Analysis** tab to upload your dataset and start exploring insights instantly!", icon="✨")
+          
 #---------------------------------------------------------------------------------------------------------------------------------
 
 if page == "analysis":
@@ -676,4 +760,3 @@ if page == "analysis":
 
                     #st.download_button(label="Download as PNG (High Quality)",data=png_buffer,file_name=f"plot_{i + 1}.png",mime="image/png")
                     #st.download_button(label="Download as HTML (Interactive)",data=html_buffer,file_name=f"plot_{i + 1}.html",mime="text/html")
-
