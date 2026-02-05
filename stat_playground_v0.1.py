@@ -46,14 +46,29 @@ st.markdown(
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
+    .version-badge {
+        text-align: center;
+        display: inline-block;
+        background: linear-gradient(120deg, #0056b3, #0d4a96);
+        color: white;
+        padding: 2px 12px;
+        border-radius: 20px;
+        font-size: 1.15rem;
+        margin-top: 8px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
     </style>
-    <div class="title-large">Statistics Playground</div>
-    <div class="title-small">Play with Data | v0.2</div>
+    <div style="text-align: center;">
+        <div class="title-large">Statistics Playground</div>
+        <div class="version-badge"> Play with Data | v0.2 </div>
+    </div>
     """,
     unsafe_allow_html=True
 )
+st.divider()
 #----------------------------------------
-
 st.markdown(
     """
     <style>
@@ -83,7 +98,6 @@ st.markdown(
     </div>
     """,
     unsafe_allow_html=True)
-
 #----------------------------------------
 #st.divider()
 #----------------------------------------
@@ -148,106 +162,99 @@ def plot_histograms_with_kde(df):
 #---------------------------------------------------------------------------------------------------------------------------------
 ### Main app
 #---------------------------------------------------------------------------------------------------------------------------------
-
 if "current_page" not in st.session_state:
     st.session_state.current_page = "home"
 
-col1, col2 = st.columns(2)
-with col1:
-    if st.button("🏠 **Home**",use_container_width=True):
-        st.session_state.current_page = "home"
+#col1, col2 = st.columns(2)
+#with col1:
+    #if st.button("🏠 **Home**",use_container_width=True):
+        #st.session_state.current_page = "home"
         
-with col2:
-    if st.button("📈 **Analysis**",use_container_width=True):
-        st.session_state.current_page = "analysis" 
+#with col2:
+    #if st.button("📈 **Analysis**",use_container_width=True):
+        #st.session_state.current_page = "analysis" 
         
 page = st.session_state.current_page
-
+#st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
 #---------------------------------------------------------------------------------------------------------------------------------
 
 if page == "home":
-    # ===== PAGE HEADER =====
-    st.markdown("""
-    <div style="text-align: center; padding: 25px 0; margin-bottom: 40px; background: linear-gradient(120deg, #f8fbff 0%, #eef5ff 100%); border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 30, 80, 0.08);">
-        <h1 style="color: #004a96; font-weight: 800; font-size: 3.2rem; margin-bottom: 15px; background: linear-gradient(to right, #0056b3, #0d4a96); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-            📊 Statistics Playground
-        </h1>
-        <p style="color: #4a5568; font-size: 1.4rem; max-width: 800px; margin: 0 auto; line-height: 1.6; padding: 0 20px;">
-            Transform complex data into clear insights with zero coding required. 
-            <span style="color: #0056b3; font-weight: 600;">Trusted by researchers, analysts, and educators worldwide.</span>
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
 
-    # ===== DESCRIPTION SECTION =====
-    st.markdown('<div class="section-header"><h2>🌟 What is Statistics Playground?</h2><div class="section-divider"></div></div>', unsafe_allow_html=True)
+    #col1, col2 = st.columns(2)
     
-    desc_points = [
-        ("🎯", "Intuitive Interface", "User-friendly workspace for comprehensive statistical analysis and visualization without technical barriers"),
-        ("✨", "Democratized Analytics", "Empowers researchers and social scientists to explore, visualize, and interpret data effortlessly"),
-        ("🔬", "Robust Statistical Engine", "Supports T-tests, Chi-Square, ANOVA, correlation analysis, and advanced hypothesis testing"),
-        ("💡", "Relationship Discovery", "Uncover hidden patterns and meaningful connections within complex datasets"),
-        ("🎨", "Survey-Ready Tools", "Customizable visualizations, weighted proportion tables, and demographic analysis for survey data"),
-        ("🚀", "Seamless Workflow", "Flexible uploads, one-click exports, and publication-ready outputs for data-driven decisions")
-    ]
-    
-    # Create 2 rows of 3 cards each for Description
-    for i in range(0, 6, 3):
-        cols = st.columns(3, gap="medium")
-        for j in range(3):
-            if i+j < len(desc_points):
-                icon, title, desc = desc_points[i+j]
-                with cols[j]:
-                    st.markdown(f"""
-                    <div class="desc-card">
-                        <div class="desc-icon">{icon}</div>
-                        <h3 class="desc-title">{title}</h3>
-                        <p class="desc-text">{desc}</p>
-                    </div>
-                    """, unsafe_allow_html=True)
+    col1, spacer, col2 = st.columns([1, 0.1, 1])
+    with col1:
+        # ===== DESCRIPTION SECTION =====
+        st.markdown('<div class="section-header"><h2>🌟 Description</h2><div class="section-divider"></div></div>', unsafe_allow_html=True)
+        
+        desc_points = [
+            ("🎯", "Intuitive Interface", "User-friendly workspace for comprehensive statistical analysis and visualization without technical barriers"),
+            ("✨", "Democratized Analytics", "Empowers researchers and social scientists to explore, visualize, and interpret data effortlessly"),
+            ("🔬", "Robust Statistical Engine", "Supports T-tests, Chi-Square, ANOVA, correlation analysis, and advanced hypothesis testing"),
+            ("💡", "Relationship Discovery", "Uncover hidden patterns and meaningful connections within complex datasets"),
+            ("🎨", "Survey-Ready Tools", "Customizable visualizations, weighted proportion tables, and demographic analysis for survey data"),
+            ("🚀", "Seamless Workflow", "Flexible uploads, one-click exports, and publication-ready outputs for data-driven decisions")
+        ]
+        
+        # Create 2 rows of 3 cards each for Description
+        for i in range(0, 6, 3):
+            cols = st.columns(3, gap="medium")
+            for j in range(3):
+                if i+j < len(desc_points):
+                    icon, title, desc = desc_points[i+j]
+                    with cols[j]:
+                        st.markdown(f"""
+                        <div class="desc-card">
+                            <div class="desc-icon">{icon}</div>
+                            <h3 class="desc-title">{title}</h3>
+                            <p class="desc-text">{desc}</p>
+                        </div>
+                        """, unsafe_allow_html=True)
 
-    st.markdown("<div style='height: 40px;'></div>", unsafe_allow_html=True)  # Spacer
+        st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)  # Spacer
     
-    # ===== FEATURES SECTION =====
-    st.markdown('<div class="section-header"><h2>⚡ Powerful Capabilities</h2><div class="section-divider"></div></div>', unsafe_allow_html=True)
-    
-    feature_points = [
-        ("🔍", "Smart Data Filtering", "Create precise subsets with weighted proportion tables for accurate survey interpretation"),
-        ("📊", "Statistical Test Suite", "One-click T-tests, Chi-Square, ANOVA, and correlation analysis with detailed diagnostics"),
-        ("📈", "Insight Dashboard", "Interactive summary statistics and correlation matrices with visual heatmaps"),
-        ("🎨", "Visual Studio", "Custom histograms, scatter plots, regression lines, box plots, and multi-variable charts"),
-        ("🧮", "Aggregation Toolkit", "Dynamic sum, mean, count, and custom functions with group-by capabilities"),
-        ("📤", "Publication Exports", "High-resolution PNG, vector SVG, or interactive HTML exports for reports and presentations")
-    ]
-    
-    # Create 2 rows of 3 cards each for Features (different layout style)
-    for i in range(0, 6, 3):
-        cols = st.columns(3, gap="medium")
-        for j in range(3):
-            if i+j < len(feature_points):
-                icon, title, desc = feature_points[i+j]
-                with cols[j]:
-                    st.markdown(f"""
-                    <div class="feature-card">
-                        <div class="feature-badge">{icon}</div>
-                        <h3 class="feature-title">{title}</h3>
-                        <p class="feature-text">{desc}</p>
-                        <div class="feature-highlight"></div>
-                    </div>
-                    """, unsafe_allow_html=True)
+    with col2:
+        # ===== FEATURES SECTION =====
+        st.markdown('<div class="section-header"><h2>⚡ Capabilities</h2><div class="section-divider"></div></div>', unsafe_allow_html=True)
+        
+        feature_points = [
+            ("🔍", "Smart Data Filtering", "Create precise subsets with weighted proportion tables for accurate survey interpretation"),
+            ("📊", "Statistical Test Suite", "One-click T-tests, Chi-Square, ANOVA, and correlation analysis with detailed diagnostics"),
+            ("📈", "Insight Dashboard", "Interactive summary statistics and correlation matrices with visual heatmaps"),
+            ("🎨", "Visual Studio", "Custom histograms, scatter plots, regression lines, box plots, and multi-variable charts"),
+            ("🧮", "Aggregation Toolkit", "Dynamic sum, mean, count, and custom functions with group-by capabilities"),
+            ("📤", "Publication Exports", "High-resolution PNG, vector SVG, or interactive HTML exports for reports and presentations")
+        ]
+        
+        # Create 2 rows of 3 cards each for Features (different layout style)
+        for i in range(0, 6, 3):
+            cols = st.columns(3, gap="medium")
+            for j in range(3):
+                if i+j < len(feature_points):
+                    icon, title, desc = feature_points[i+j]
+                    with cols[j]:
+                        st.markdown(f"""
+                        <div class="feature-card">
+                            <div class="feature-badge">{icon}</div>
+                            <h3 class="feature-title">{title}</h3>
+                            <p class="feature-text">{desc}</p>
+                            <div class="feature-highlight"></div>
+                        </div>
+                        """, unsafe_allow_html=True)
 
     # ===== CTA SECTION =====
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #0056b3 0%, #0d4a96 100%); border-radius: 16px; padding: 35px; margin: 50px 0; text-align: center; box-shadow: 0 10px 30px rgba(0, 86, 179, 0.25);">
-        <h2 style="color: white; font-size: 2.3rem; margin-bottom: 15px; font-weight: 700;">Ready to Unlock Your Data's Potential?</h2>
-        <p style="color: rgba(255,255,255,0.92); font-size: 1.35rem; max-width: 700px; margin: 0 auto 25px; line-height: 1.6;">
-            Join thousands of researchers who transformed their workflow with Statistics Playground
-        </p>
-        <div style="background: rgba(255,255,255,0.15); display: inline-block; padding: 8px 28px; border-radius: 50px; color: white; font-weight: 600; font-size: 1.25rem; margin-top: 10px;">
-            ✨ Click "Analysis" in the sidebar to begin your journey ✨
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+
+    st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+    btn_col1, btn_col2, btn_col3 = st.columns([1, 2, 1])
+    with btn_col2:
+        if st.button("✨ Analysis ✨", 
+                     use_container_width=True,
+                     type="primary",
+                     key="begin_analysis"):
+            st.session_state.current_page = "analysis"
+            st.rerun()  # Force immediate refresh
+    
+    st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
 
     # ===== CUSTOM CSS =====
     st.markdown("""
@@ -353,8 +360,8 @@ if page == "home":
         box-shadow: 0 0 25px rgba(23, 162, 184, 0.4);
     }
     .feature-badge {
-        width: 68px;
-        height: 68px;
+        width: 60px;
+        height: 60px;
         background: linear-gradient(135deg, #0d4a96 0%, #0056b3 100%);
         border-radius: 20px;
         display: flex;
@@ -410,11 +417,19 @@ if page == "home":
           
 #---------------------------------------------------------------------------------------------------------------------------------
 
-if page == "analysis":
+#if page == "analysis":
+elif page == "analysis":  
     
-    st.sidebar.subheader("**:blue[Contents]**",divider='blue')
-    file = st.sidebar.file_uploader("**:blue[Choose a file]**",type=["csv", "xls", "xlsx"], accept_multiple_files=False, key="file_upload")
-    st.sidebar.divider()
+    if st.sidebar.button("← Home", use_container_width=True, type="secondary"):
+        st.session_state.current_page = "home" 
+        st.rerun()  # Force immediate refresh
+        
+    
+    with st.sidebar.container(border=True):
+        
+        file = st.file_uploader("**:blue[Choose a file]**",type=["csv", "xls", "xlsx"], accept_multiple_files=False, key="file_upload")
+        #st.sidebar.divider()
+        
     if file is not None:
         df = load_file(file)        #for filter
         df1 = df.copy()             #for analysis
@@ -451,13 +466,16 @@ if page == "analysis":
                 
         initialize_session_state()
         
-        if st.sidebar.button("Reset Filters"):
-            st.session_state.clear()
-            initialize_session_state()
-        #---------------------------------------------------------------
-        selected_columns = st.sidebar.multiselect("**:blue[Columns to display]**", options=df.columns, default=st.session_state.selected_columns, key="selected_columns") 
-        subset_option = st.sidebar.selectbox("**:blue[Subset Data Options]**", ["No Subset", "Enable Subset"])
-        #---------------------------------------------------------------
+        with st.sidebar.container(border=True):
+            
+            if st.button("Reset Filters"):
+                st.session_state.clear()
+                initialize_session_state()
+            #---------------------------------------------------------------
+            selected_columns = st.multiselect("**:blue[Columns to display]**", options=df.columns, default=st.session_state.selected_columns, key="selected_columns") 
+            subset_option = st.selectbox("**:blue[Subset Data Options]**", ["No Subset", "Enable Subset"])
+            #---------------------------------------------------------------
+        
         selected_df = df[selected_columns].copy()
         #---------------------------------------------------------------
         if subset_option == "Enable Subset":
