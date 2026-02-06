@@ -67,7 +67,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-st.divider()
+
 #----------------------------------------
 st.markdown(
     """
@@ -98,14 +98,167 @@ st.markdown(
     </div>
     """,
     unsafe_allow_html=True)
+
 #----------------------------------------
 #st.divider()
 #----------------------------------------
 
 #---------------------------------------------------------------------------------------------------------------------------------
-### knowledge 
+### CSS 
 #---------------------------------------------------------------------------------------------------------------------------------
 
+st.markdown("""
+    <style>
+    /* Section Headers */
+    .section-header {
+        text-align: center;
+        margin: 50px 0 35px;
+        position: relative;
+    }
+    .section-header h2 {
+        color: #004a96;
+        font-weight: 800;
+        font-size: 1.8rem;
+        display: inline-block;
+        position: relative;
+        padding-bottom: 12px;
+    }
+    .section-header h2:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(to right, #0056b3, #4da6ff);
+        border-radius: 2px;
+    }
+    
+    /* Description Cards - Clean & Professional */
+    .desc-card {
+        background: white;
+        border-radius: 16px;
+        padding: 32px 25px;
+        box-shadow: 0 6px 18px rgba(0, 30, 80, 0.09);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        height: 100%;
+        border: 1px solid rgba(0, 86, 179, 0.08);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: 150px;
+    }
+    .desc-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 28px rgba(0, 30, 80, 0.18);
+        border-color: rgba(0, 86, 179, 0.25);
+    }
+    .desc-card:hover:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, #0056b3, #4da6ff);
+    }
+    .desc-icon {
+        font-size: 2.2rem;
+        margin-bottom: 20px;
+        display: block;
+        color: #0056b3;
+        font-weight: bold;
+        line-height: 1;
+    }
+    .desc-text {
+        color: #4a5568;
+        font-size: 3.4rem;
+        line-height: 1.7;
+        margin: 0;
+        font-weight: 500;
+        padding: 0 12px;
+        max-width: 400px;
+    }
+
+    /* Feature Cards - White Background, Icon + Text Only */
+    .feature-card {
+        background: white;
+        border-radius: 16px;
+        padding: 35px 25px;
+        box-shadow: 0 6px 18px rgba(0, 30, 80, 0.09);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        height: 100%;
+        border: 1px solid rgba(0, 86, 179, 0.08);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: 150px;
+    }
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 28px rgba(0, 30, 80, 0.18);
+        border-color: rgba(0, 86, 179, 0.25);
+    }
+    .feature-card:hover:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, #17a2b8, #28a745, #ffc107);
+    }
+    .feature-card:hover .feature-badge {
+        transform: scale(1.15) rotate(5deg);
+        box-shadow: 0 0 25px rgba(23, 162, 184, 0.4);
+    }
+    .feature-badge {
+        width: 68px;
+        height: 68px;
+        background: linear-gradient(135deg, #0d4a96 0%, #0056b3 100%);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 2.4rem;
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 4px 15px rgba(0, 86, 179, 0.25);
+        transition: all 0.35s ease;
+    }
+    .feature-text {
+        color: #4a5568;
+        font-size: 4rem;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0 15px;
+        font-weight: 600;
+        text-align: center;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+        .desc-title, .feature-title { font-size: 1.4rem; }
+        .desc-text, .feature-text { font-size: 1.5rem; }
+        .desc-icon, .feature-badge { font-size: 2.3rem; width: 60px; height: 60px; }
+    }
+    @media (max-width: 600px) {
+        .section-header h2 { font-size: 2rem; }
+        .desc-card, .feature-card { padding: 22px 18px; }
+        .desc-title, .feature-title { font-size: 1.35rem; }
+        .desc-text, .feature-text { font-size: 1.5rem; min-height: auto; }
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 #---------------------------------------------------------------------------------------------------------------------------------
 ### Functions & Definitions
@@ -162,20 +315,11 @@ def plot_histograms_with_kde(df):
 #---------------------------------------------------------------------------------------------------------------------------------
 ### Main app
 #---------------------------------------------------------------------------------------------------------------------------------
+st.markdown("---")
 if "current_page" not in st.session_state:
     st.session_state.current_page = "home"
-
-#col1, col2 = st.columns(2)
-#with col1:
-    #if st.button("🏠 **Home**",use_container_width=True):
-        #st.session_state.current_page = "home"
-        
-#with col2:
-    #if st.button("📈 **Analysis**",use_container_width=True):
-        #st.session_state.current_page = "analysis" 
-        
+   
 page = st.session_state.current_page
-#st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
 #---------------------------------------------------------------------------------------------------------------------------------
 
 if page == "home":
@@ -188,25 +332,23 @@ if page == "home":
         st.markdown('<div class="section-header"><h2>🌟 Description</h2><div class="section-divider"></div></div>', unsafe_allow_html=True)
         
         desc_points = [
-            ("🎯", "Intuitive Interface", "User-friendly workspace for comprehensive statistical analysis and visualization without technical barriers"),
-            ("✨", "Democratized Analytics", "Empowers researchers and social scientists to explore, visualize, and interpret data effortlessly"),
-            ("🔬", "Robust Statistical Engine", "Supports T-tests, Chi-Square, ANOVA, correlation analysis, and advanced hypothesis testing"),
-            ("💡", "Relationship Discovery", "Uncover hidden patterns and meaningful connections within complex datasets"),
-            ("🎨", "Survey-Ready Tools", "Customizable visualizations, weighted proportion tables, and demographic analysis for survey data"),
-            ("🚀", "Seamless Workflow", "Flexible uploads, one-click exports, and publication-ready outputs for data-driven decisions")
+            ("Comprehensive statistical analysis and visualization without barriers"),
+            ("Help to explore, visualize, and interpret data effortlessly"),
+            ("Supports all advanced hypothesis testing"),
+            ("Uncover hidden patterns and meaningful connections within complex datasets"),
+            ("Customizable visualizations, weighted proportion tables, and demographic analysis for survey data"),
+            ("Flexible uploads, one-click exports, and publication-ready outputs for data-driven decisions")
         ]
-        
+
         # Create 2 rows of 3 cards each for Description
         for i in range(0, 6, 3):
             cols = st.columns(3, gap="medium")
             for j in range(3):
                 if i+j < len(desc_points):
-                    icon, title, desc = desc_points[i+j]
+                    desc = desc_points[i+j]
                     with cols[j]:
                         st.markdown(f"""
                         <div class="desc-card">
-                            <div class="desc-icon">{icon}</div>
-                            <h3 class="desc-title">{title}</h3>
                             <p class="desc-text">{desc}</p>
                         </div>
                         """, unsafe_allow_html=True)
@@ -216,205 +358,39 @@ if page == "home":
     with col2:
         # ===== FEATURES SECTION =====
         st.markdown('<div class="section-header"><h2>⚡ Capabilities</h2><div class="section-divider"></div></div>', unsafe_allow_html=True)
-        
+    
         feature_points = [
-            ("🔍", "Smart Data Filtering", "Create precise subsets with weighted proportion tables for accurate survey interpretation"),
-            ("📊", "Statistical Test Suite", "One-click T-tests, Chi-Square, ANOVA, and correlation analysis with detailed diagnostics"),
-            ("📈", "Insight Dashboard", "Interactive summary statistics and correlation matrices with visual heatmaps"),
-            ("🎨", "Visual Studio", "Custom histograms, scatter plots, regression lines, box plots, and multi-variable charts"),
-            ("🧮", "Aggregation Toolkit", "Dynamic sum, mean, count, and custom functions with group-by capabilities"),
-            ("📤", "Publication Exports", "High-resolution PNG, vector SVG, or interactive HTML exports for reports and presentations")
+            ("Create precise subsets with weighted proportion tables for accurate survey interpretation"),
+            ("One-click T-tests, Chi-Square, ANOVA, and correlation analysis with detailed diagnostics"),
+            ("Interactive summary statistics and correlation matrices with visual heatmaps"),
+            ("Custom histograms, scatter plots, regression lines, box plots, and multi-variable charts"),
+            ("Dynamic sum, mean, count, and custom functions with group-by capabilities"),
+            ("High-resolution PNG, vector SVG, or interactive HTML exports for reports and presentations")
         ]
         
-        # Create 2 rows of 3 cards each for Features (different layout style)
+        # Create 2 rows of 3 cards each for Features
         for i in range(0, 6, 3):
             cols = st.columns(3, gap="medium")
             for j in range(3):
                 if i+j < len(feature_points):
-                    icon, title, desc = feature_points[i+j]
+                    desc = feature_points[i+j]
                     with cols[j]:
                         st.markdown(f"""
                         <div class="feature-card">
-                            <div class="feature-badge">{icon}</div>
-                            <h3 class="feature-title">{title}</h3>
                             <p class="feature-text">{desc}</p>
-                            <div class="feature-highlight"></div>
                         </div>
                         """, unsafe_allow_html=True)
 
     # ===== CTA SECTION =====
 
-    st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 70px;'></div>", unsafe_allow_html=True)
     btn_col1, btn_col2, btn_col3 = st.columns([1, 2, 1])
     with btn_col2:
-        if st.button("✨ Analysis ✨", 
-                     use_container_width=True,
-                     type="primary",
-                     key="begin_analysis"):
+        if st.button("**Click to Enter Analysis Page**", use_container_width=True,type="primary",key="begin_analysis"):
             st.session_state.current_page = "analysis"
             st.rerun()  # Force immediate refresh
-    
-    st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
-
-    # ===== CUSTOM CSS =====
-    st.markdown("""
-    <style>
-    /* Section Headers */
-    .section-header {
-        text-align: center;
-        margin: 50px 0 35px;
-        position: relative;
-    }
-    .section-header h2 {
-        color: #004a96;
-        font-weight: 800;
-        font-size: 2.4rem;
-        display: inline-block;
-        position: relative;
-        padding-bottom: 12px;
-    }
-    .section-header h2:after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 80px;
-        height: 4px;
-        background: linear-gradient(to right, #0056b3, #4da6ff);
-        border-radius: 2px;
-    }
-    
-    /* Description Cards - Clean & Professional */
-    .desc-card {
-        background: white;
-        border-radius: 16px;
-        padding: 28px 25px;
-        box-shadow: 0 6px 18px rgba(0, 30, 80, 0.09);
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        height: 100%;
-        border: 1px solid rgba(0, 86, 179, 0.08);
-        position: relative;
-        overflow: hidden;
-    }
-    .desc-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 28px rgba(0, 30, 80, 0.18);
-        border-color: rgba(0, 86, 179, 0.25);
-    }
-    .desc-card:hover:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 5px;
-        background: linear-gradient(90deg, #0056b3, #4da6ff);
-    }
-    .desc-icon {
-        font-size: 2.8rem;
-        margin-bottom: 18px;
-        display: block;
-        text-align: center;
-        color: #0056b3;
-        font-weight: bold;
-        line-height: 1;
-    }
-    .desc-title {
-        font-size: 1.55rem;
-        color: #004a96;
-        font-weight: 700;
-        margin: 0 0 14px;
-        text-align: center;
-        line-height: 1.3;
-    }
-    .desc-text {
-        color: #4a5568;
-        font-size: 1.12rem;
-        line-height: 1.65;
-        text-align: center;
-        margin: 0;
-        padding: 0 8px;
-    }
-    
-    /* Feature Cards - Vibrant & Energetic */
-    .feature-card {
-        background: linear-gradient(145deg, #f9fbfd 0%, #f0f5ff 100%);
-        border-radius: 16px;
-        padding: 30px 25px;
-        box-shadow: 0 6px 20px rgba(23, 162, 184, 0.12);
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        height: 100%;
-        border: 1px solid rgba(23, 162, 184, 0.15);
-        position: relative;
-        overflow: hidden;
-    }
-    .feature-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 14px 32px rgba(23, 162, 184, 0.25);
-        background: linear-gradient(145deg, #f0f7ff 0%, #e6f2ff 100%);
-        border-color: rgba(23, 162, 184, 0.35);
-    }
-    .feature-card:hover .feature-badge {
-        transform: scale(1.15) rotate(5deg);
-        box-shadow: 0 0 25px rgba(23, 162, 184, 0.4);
-    }
-    .feature-badge {
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(135deg, #0d4a96 0%, #0056b3 100%);
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 20px;
-        font-size: 2.4rem;
-        color: white;
-        font-weight: bold;
-        box-shadow: 0 4px 15px rgba(0, 86, 179, 0.25);
-        transition: all 0.35s ease;
-    }
-    .feature-title {
-        font-size: 1.5rem;
-        color: #004a96;
-        font-weight: 700;
-        margin: 0 0 15px;
-        text-align: center;
-        line-height: 1.35;
-    }
-    .feature-text {
-        color: #2d3748;
-        font-size: 1.1rem;
-        line-height: 1.65;
-        text-align: center;
-        margin: 0;
-        padding: 0 10px;
-        min-height: 70px;
-    }
-    .feature-highlight {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: linear-gradient(90deg, #17a2b8, #28a745, #ffc107);
-    }
-    
-    /* Responsive adjustments */
-    @media (max-width: 900px) {
-        .desc-title, .feature-title { font-size: 1.4rem; }
-        .desc-text, .feature-text { font-size: 1.05rem; }
-        .desc-icon, .feature-badge { font-size: 2.3rem; width: 60px; height: 60px; }
-    }
-    @media (max-width: 600px) {
-        .section-header h2 { font-size: 2rem; }
-        .desc-card, .feature-card { padding: 22px 18px; }
-        .desc-title, .feature-title { font-size: 1.35rem; }
-        .desc-text, .feature-text { font-size: 1rem; min-height: auto; }
-    }
-    </style>
-    """, unsafe_allow_html=True)
-          
+    st.markdown("<div style='height: 50px;'></div>", unsafe_allow_html=True)
+         
 #---------------------------------------------------------------------------------------------------------------------------------
 
 #if page == "analysis":
@@ -424,7 +400,6 @@ elif page == "analysis":
         st.session_state.current_page = "home" 
         st.rerun()  # Force immediate refresh
         
-    
     with st.sidebar.container(border=True):
         
         file = st.file_uploader("**:blue[Choose a file]**",type=["csv", "xls", "xlsx"], accept_multiple_files=False, key="file_upload")
@@ -898,3 +873,6 @@ elif page == "analysis":
 
                     #st.download_button(label="Download as PNG (High Quality)",data=png_buffer,file_name=f"plot_{i + 1}.png",mime="image/png")
                     #st.download_button(label="Download as HTML (Interactive)",data=html_buffer,file_name=f"plot_{i + 1}.html",mime="text/html")
+                        
+    else:
+        st.warning("Please upload a file to start statistical analysis.")
