@@ -396,7 +396,7 @@ if page == "home":
 #if page == "analysis":
 elif page == "analysis":  
     
-    if st.sidebar.button("← Home", use_container_width=True, type="secondary"):
+    if st.sidebar.button("**← Home**", use_container_width=True, type="secondary"):
         st.session_state.current_page = "home" 
         st.rerun()  # Force immediate refresh
         
@@ -876,3 +876,4 @@ elif page == "analysis":
                         
     else:
         st.warning("Please upload a file to start statistical analysis.")
+
